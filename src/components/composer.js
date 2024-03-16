@@ -18,7 +18,7 @@ function formatCurrency(value) {
 	}).format(value);
 }
 
-function Item({ onRemove, onChange, value }) {
+function Item({ onRemove, onChange, value, moveUp, moveDown }) {
 	const yearlyCost = value.frequency === "yearly" ? value.amount : value.amount * 12;
 	const monthlyCost = value.frequency === "monthly" ? value.amount : value.amount / 12;
 	const type = value.type;
@@ -60,6 +60,10 @@ function Item({ onRemove, onChange, value }) {
 				}} />
 			</div>
 			<Button title="delete" onClick={onRemove}>x</Button>
+			<div className="flex flex-col">
+				<span className="cursor-pointer hover:bg-slate-200 rounded-md px-2" onClick={() => { moveUp(value.id) }}>&uarr;</span>
+				<span className="cursor-pointer hover:bg-slate-200 rounded-md px-2" onClick={() => { moveDown(value.id) }}>&darr;</span>
+			</div>
 		</div>
 	</div>
 }
@@ -104,6 +108,21 @@ export default function Composer({ children }) {
 		setItems(newItems);
 	}
 
+	const moveItemUp = (id) => {
+		const index = items.findIndex(item => item.id === id);
+		if (index === 0) return;
+		const newItems = [...items];
+		[newItems[index], newItems[index - 1]] = [newItems[index - 1], newItems[index]];
+		setItems(newItems);
+	}
+	const moveItemDown = (id) => {
+		const index = items.findIndex(item => item.id === id);
+		if (index === items.length - 1) return;
+		const newItems = [...items];
+		[newItems[index], newItems[index + 1]] = [newItems[index + 1], newItems[index]];
+		setItems(newItems);
+	}
+
 	useEffect(() => {
 		if (items.length === 0) {
 			addItems([
@@ -123,6 +142,8 @@ export default function Composer({ children }) {
 				onRemove={() => removeItem(item.id)}
 				value={item}
 				onChange={updateItem}
+				moveUp={moveItemUp}
+				moveDown={moveItemDown}
 			/>)}
 			<div className="my-4">
 				<Button onClick={() => { addItem('income') }}>add income source</Button>
@@ -136,6 +157,8 @@ export default function Composer({ children }) {
 				onRemove={() => removeItem(item.id)}
 				value={item}
 				onChange={updateItem}
+				moveUp={moveItemUp}
+				moveDown={moveItemDown}
 			/>)}
 			<div className="my-4">
 				<Button onClick={() => { addItem('expense') }}>add expense source</Button>
