@@ -59,7 +59,7 @@ function Item({ onRemove, onChange, value }) {
 					onChange(value.id, { ...value, amount: e.target.value })
 				}} />
 			</div>
-			<Button onClick={onRemove}>delete</Button>
+			<Button title="delete" onClick={onRemove}>x</Button>
 		</div>
 	</div>
 }
