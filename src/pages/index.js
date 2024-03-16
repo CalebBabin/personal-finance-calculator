@@ -1,3 +1,4 @@
+import Composer from "@/components/composer";
 import { Inter } from "next/font/google";
 import Head from "next/head";
 
@@ -6,12 +7,12 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
 	return (
 		<main
-			className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
+			className={`flex min-h-screen flex-col items-center justify-between py-24 px-8 lg:px-24 pb-48 ${inter.className}`}
 		>
 			<Head>
 				<title>Personal Finance Calculator</title>
 			</Head>
-			<div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
+			<div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex mb-8 lg:mb-24">
 				<div>
 					made by&nbsp;
 					<a
@@ -35,6 +36,9 @@ export default function Home() {
 					</a>
 				</div>
 			</div>
-		</main >
+			<div className="z-10 w-full items-center justify-between font-mono text-sm lg:flex">
+				<Composer />
+			</div>
+		</main>
 	);
 }
