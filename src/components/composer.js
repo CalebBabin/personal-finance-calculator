@@ -95,11 +95,12 @@ export default function Composer({ children }) {
 		let totalIncome = 0;
 		let totalExpense = 0;
 		for (let i = 0; i < items.length; i++) {
+			const multiplier = items[i].frequency === 'yearly' ? 1 : 12;
 			if (items[i].type === 'income') {
-				totalIncome += items[i].amount;
-				if (items[i].taxed) taxedTotal += items[i].amount;
+				totalIncome += items[i].amount * multiplier;
+				if (items[i].taxed) taxedTotal += items[i].amount * multiplier;
 			} else {
-				totalExpense += items[i].amount;
+				totalExpense += items[i].amount * multiplier;
 			}
 		}
 
