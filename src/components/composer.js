@@ -11,6 +11,8 @@ import {
 
 import { Input } from "@/components/ui/input";
 
+import { Checkbox } from "@/components/ui/checkbox";
+
 function formatCurrency(value) {
 	return new Intl.NumberFormat('en-US', {
 		style: 'currency',
@@ -59,16 +61,27 @@ function Item({ onRemove, onChange, value, moveUp, moveDown }) {
 					onChange(value.id, { ...value, amount: e.target.value })
 				}} />
 			</div>
-			<Button title="delete" onClick={onRemove}>x</Button>
-			<div className="flex flex-col">
-				<span className="cursor-pointer hover:bg-slate-200 rounded-md px-2" onClick={() => { moveUp(value.id) }}>&uarr;</span>
-				<span className="cursor-pointer hover:bg-slate-200 rounded-md px-2" onClick={() => { moveDown(value.id) }}>&darr;</span>
+			{type === 'income' && <div className="flex items-center">
+				<label htmlFor={value.id + "_taxed"}>taxed?&nbsp;</label> <Checkbox id={value.id + "_taxed"} checked={value.taxed} onCheckedChange={(e) => {
+					onChange(value.id, { ...value, taxed: e })
+				}} />
+			</div>}
+			<div className="flex items-center w-full lg:w-auto">
+				<Button className="w-full lg:w-auto" title="delete" onClick={onRemove}>
+					<span className="hidden lg:block">x</span>
+					<span className="block lg:hidden">delete</span>
+				</Button>
+				<div className="flex flex-col">
+					<span className="cursor-pointer hover:bg-slate-200 rounded-md px-2" onClick={() => { moveUp(value.id) }}>&uarr;</span>
+					<span className="cursor-pointer hover:bg-slate-200 rounded-md px-2" onClick={() => { moveDown(value.id) }}>&darr;</span>
+				</div>
 			</div>
 		</div>
 	</div>
 }
 
 function generateItemObject(type, values = {}) {
+	if (values.taxed === undefined && type === 'income') values.taxed = true;
 	return { type, frequency: "monthly", name: 'new ' + type, amount: 100, ...values };
 }
 
