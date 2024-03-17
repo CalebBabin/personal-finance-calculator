@@ -36,7 +36,7 @@ export default function Home() {
 					</a>
 				</div>
 			</div>
-			<div className="z-10 w-full items-center justify-between font-mono text-sm lg:flex">
+			<div className="z-10 w-full font-mono text-sm">
 				<Composer />
 			</div>
 		</main>

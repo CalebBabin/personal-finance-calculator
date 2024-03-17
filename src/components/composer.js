@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { Checkbox } from "@/components/ui/checkbox";
+import { calculateTax } from "./taxBrackets";
 
 function formatCurrency(value) {
 	return new Intl.NumberFormat('en-US', {
@@ -89,6 +90,26 @@ export default function Composer({ children }) {
 	const [items, setItems] = useState([]);
 	const [nextId, setNextId] = useState(0);
 
+	const { incomeTax, totalIncome, totalExpense } = useMemo(() => {
+		let taxedTotal = 0;
+		let totalIncome = 0;
+		let totalExpense = 0;
+		for (let i = 0; i < items.length; i++) {
+			if (items[i].type === 'income') {
+				totalIncome += items[i].amount;
+				if (items[i].taxed) taxedTotal += items[i].amount;
+			} else {
+				totalExpense += items[i].amount;
+			}
+		}
+
+		return {
+			incomeTax: calculateTax(taxedTotal),
+			totalIncome,
+			totalExpense,
+		}
+	}, [items]);
+
 	const addItem = (type = 'expense', values = {}) => {
 		values.id = nextId;
 		setItems([...items, generateItemObject(type, values)]);
@@ -147,35 +168,52 @@ export default function Composer({ children }) {
 		}
 	}, [])
 
-	return <div className="flex flex-wrap justify-center items-start gap-8 w-full">
-		<div className="w-full flex flex-col items-center justify-center max-w-xl">
-			<h2 className="text-2xl font-bold">income</h2>
-			{items.filter((value) => value.type === 'income').map(item => <Item
-				key={item.id}
-				onRemove={() => removeItem(item.id)}
-				value={item}
-				onChange={updateItem}
-				moveUp={moveItemUp}
-				moveDown={moveItemDown}
-			/>)}
-			<div className="my-4">
-				<Button onClick={() => { addItem('income') }}>add income source</Button>
+	return <>
+		<div className="flex flex-wrap w-full justify-center mb-24 mt-12 mx-auto max-w-5xl">
+			<div className="w-full lg:w-1/3 text-center p-4">
+				<h3 className="text-xl font-bold">income after tax</h3>
+				<h2 className="text-2xl font-bold">{formatCurrency(totalIncome - incomeTax)}</h2>
+				<p>{formatCurrency(totalIncome)} before tax<br />-{formatCurrency(incomeTax)} in taxes</p>
+			</div>
+			<div className="w-full lg:w-1/3 text-center p-4">
+				<h2 className="text-xl font-bold">net income</h2>
+				<h1 className="text-4xl font-bold">{formatCurrency(totalIncome - incomeTax - totalExpense)}</h1>
+			</div>
+			<div className="w-full lg:w-1/3 text-center p-4">
+				<h3 className="text-xl font-bold">total expenses</h3>
+				<h2 className="text-2xl font-bold">{formatCurrency(totalExpense)}</h2>
 			</div>
 		</div>
+		<div className="flex flex-wrap justify-center items-start gap-8 w-full">
+			<div className="w-full flex flex-col items-center justify-center max-w-xl">
+				<h2 className="text-2xl font-bold">income</h2>
+				{items.filter((value) => value.type === 'income').map(item => <Item
+					key={item.id}
+					onRemove={() => removeItem(item.id)}
+					value={item}
+					onChange={updateItem}
+					moveUp={moveItemUp}
+					moveDown={moveItemDown}
+				/>)}
+				<div className="my-4">
+					<Button onClick={() => { addItem('income') }}>add income source</Button>
+				</div>
+			</div>
 
-		<div className="w-full flex flex-col items-center justify-center max-w-xl">
-			<h2 className="text-2xl font-bold">expense</h2>
-			{items.filter((value) => value.type === 'expense').map(item => <Item
-				key={item.id}
-				onRemove={() => removeItem(item.id)}
-				value={item}
-				onChange={updateItem}
-				moveUp={moveItemUp}
-				moveDown={moveItemDown}
-			/>)}
-			<div className="my-4">
-				<Button onClick={() => { addItem('expense') }}>add expense source</Button>
+			<div className="w-full flex flex-col items-center justify-center max-w-xl">
+				<h2 className="text-2xl font-bold">expense</h2>
+				{items.filter((value) => value.type === 'expense').map(item => <Item
+					key={item.id}
+					onRemove={() => removeItem(item.id)}
+					value={item}
+					onChange={updateItem}
+					moveUp={moveItemUp}
+					moveDown={moveItemDown}
+				/>)}
+				<div className="my-4">
+					<Button onClick={() => { addItem('expense') }}>add expense source</Button>
+				</div>
 			</div>
 		</div>
-	</div>
+	</>
 }
