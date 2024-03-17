@@ -28,11 +28,8 @@ function Item({ onRemove, onChange, value, moveUp, moveDown }) {
 
 	return <div className="border border-slate-300 rounded-md my-6 p-2 pt-4 relative w-full">
 		<div className="-top-3 absolute flex justify-between w-[90%] left-[5%]">
-			<div className="bg-white px-4">{type}</div>
-			<div className="bg-white px-4 lg:block hidden">
-				{formatCurrency(yearlyCost)} / year &nbsp; {formatCurrency(monthlyCost)} / month
-			</div>
-			<div className="bg-white px-4 lg:hidden block">
+			<div className="bg-white px-4 truncate text-ellipsis overflow-hidden h-5 cursor-default" title={value.name}>{value.name}</div>
+			<div className="bg-white px-4 truncate text-ellipsis overflow-hidden h-5 cursor-default" title={formatCurrency(monthlyCost) + ' / month'}>
 				{formatCurrency(yearlyCost)} / year
 			</div>
 		</div>
