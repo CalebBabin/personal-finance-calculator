@@ -175,6 +175,7 @@ export default function Composer({ children }) {
 				<h3 className="text-xl font-bold">income after tax</h3>
 				<h2 className="text-2xl font-bold">{formatCurrency(totalIncome - incomeTax)}</h2>
 				<p>{formatCurrency(totalIncome)} before tax<br />-{formatCurrency(incomeTax)} in taxes</p>
+				<small>(pre-programmed with U.S. 2024 tax brackets)</small>
 			</div>
 			<div className="w-full lg:w-1/3 text-center p-4">
 				<h2 className="text-xl font-bold">net income</h2>
