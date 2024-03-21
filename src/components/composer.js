@@ -85,7 +85,14 @@ function generateItemObject(type, values = {}) {
 
 export default function Composer({ children }) {
 	const [items, setItems] = useState([]);
+	const [loaded, setLoaded] = useState(false);
 	const [nextId, setNextId] = useState(0);
+
+	useEffect(() => {
+		if (loaded) {
+			localStorage.setItem('items', JSON.stringify(items));
+		}
+	}, [items, loaded]);
 
 	const { incomeTax, totalIncome, totalExpense } = useMemo(() => {
 		let taxedTotal = 0;
@@ -156,13 +163,27 @@ export default function Composer({ children }) {
 	}
 
 	useEffect(() => {
+		const preset = [
+			{ type: 'income', name: 'job', amount: 50000, frequency: 'yearly' },
+			{ type: 'expense', name: 'rent', amount: 1200, frequency: 'monthly' },
+			{ type: 'expense', name: 'food', amount: 600, frequency: 'monthly' },
+			{ type: 'expense', name: 'new phone', amount: 1000, frequency: 'yearly' },
+		];
 		if (items.length === 0) {
-			addItems([
-				{ type: 'income', name: 'job', amount: 50000, frequency: 'yearly' },
-				{ type: 'expense', name: 'rent', amount: 1200, frequency: 'monthly' },
-				{ type: 'expense', name: 'food', amount: 600, frequency: 'monthly' },
-				{ type: 'expense', name: 'new phone', amount: 1000, frequency: 'yearly' },
-			])
+			if (localStorage.getItem('items')) {
+				try {
+					addItems(JSON.parse(localStorage.getItem('items')));
+				} catch (e) {
+					console.error('error parsing items from local storage', e);
+					addItems(preset)
+				}
+			} else {
+				addItems(preset)
+			}
+
+			window.requestAnimationFrame(() => {
+				setLoaded(true);
+			});
 		}
 	}, [])
 
