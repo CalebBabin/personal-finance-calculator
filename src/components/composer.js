@@ -83,7 +83,7 @@ function generateItemObject(type, values = {}) {
 	return { type, frequency: "monthly", name: 'new ' + type, amount: 100, ...values };
 }
 
-export default function Composer({ children }) {
+export default function Composer() {
 	const [items, setItems] = useState([]);
 	const [loaded, setLoaded] = useState(false);
 	const [nextId, setNextId] = useState(0);
